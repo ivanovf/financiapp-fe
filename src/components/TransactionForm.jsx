@@ -4,7 +4,7 @@ import FieldInput from "./UI/atoms/FieldInput";
 import { useMutation } from "@apollo/client";
 import FieldSelectBox from "./UI/atoms/FieldSelectBox";
 import { AuthContext } from "../contexts/AuthContext";
-import { ADD_TRANSACTION, EDIT_TRANSACTION } from "../data/graphql.api";
+import { ADD_TRANSACTION, EDIT_TRANSACTION, DELETE_TRANSACTION } from "../data/graphql.api";
 
 function TransactionForm({ transaction, onCancel }) {
   const [name, setName] = useState("");
@@ -71,7 +71,23 @@ function TransactionForm({ transaction, onCancel }) {
     }
   }
 
-  const [saveTransaction, { error }] = useMutation(op)
+  const [saveTransaction, { error: saveError }] = useMutation(op)
+  const [deleteTransaction, { error: deleteError }] = useMutation(DELETE_TRANSACTION)
+
+  const handleDelete = async (e) => {
+    e.preventDefault()
+    try {
+      const result = await deleteTransaction({
+        variables: {
+          id: transaction.id
+        }
+      })
+      console.log(result)
+      onCancel()
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -79,13 +95,14 @@ function TransactionForm({ transaction, onCancel }) {
     try {
       const result = await saveTransaction(variables)
       console.log(result)
+      onCancel()
     } catch (error) {
       console.log(error)
     }
   }
 
   return (
-    <div className="z-10 absolute top-0 left-0 w-full h-full bg-white">
+    <div className="z-10 fixed inset-0 overflow-y-auto top-0 left-0 w-full h-full bg-white">
       <h2 className="text-xl font-bold text-gray-900 dark:text-white p-4">
         Transaction Form
       </h2>
@@ -161,6 +178,13 @@ function TransactionForm({ transaction, onCancel }) {
           <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
             Submit
           </button>
+          {transaction && 
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
+            Delete
+          </button>}
           <button
             type="button"
             className="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"

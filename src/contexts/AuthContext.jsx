@@ -16,7 +16,7 @@ function getSession() {
 
 async function getTRM() {
   try {
-    const response = await fetch('https://www.datos.gov.co/resource/32sa-8pi3.json?$order=vigenciadesde%20DESC&$limit=1')
+    const response = await fetch(import.meta.env.VITE_TRM_URL)
     const data = await response.json()
     const trm = data[0].valor
     return trm

@@ -1,15 +1,22 @@
 
 import { PropTypes } from 'prop-types'
 
+const stringToClassName = (str) => {
+  return str.replace(/ /g, '-').toLowerCase()
+}
+
 function FieldSelectBox({ label, options, value, onChange }) {
+  const id = stringToClassName(label)
+
   return (
     <div className="form-group px-4 mb-4">
-      <label htmlFor={name} className='block mb-1 text-md font-medium text-gray-900 dark:text-white'>
+      <label htmlFor={id} className='block mb-1 text-md font-medium text-gray-900 dark:text-white'>
         {label}
       </label>
-      <select
+      <select 
+        id={id}
         className="form-control"
-        value={value}
+        value={value??options[0].id}
         onChange={onChange}
       >
         {options.map((option, index) => (

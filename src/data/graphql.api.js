@@ -9,6 +9,7 @@ export const GET_TRANSACTIONS = gql`
       value
       quantity
       currency
+      currentPrice
       platform {
         name
       }
@@ -35,4 +36,9 @@ export const EDIT_TRANSACTION = gql`
     updateTransaction(id: $id, updateInput: $updateInput) {
       id
     }
+  }`
+
+export const DELETE_TRANSACTION = gql`
+  mutation DeleteTransaction($id: ID!) {
+    deleteTransaction(id: $id)
   }`

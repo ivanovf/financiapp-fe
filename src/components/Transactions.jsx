@@ -18,11 +18,25 @@ function Transactions() {
   }
 
   // Calculates total assets
-  let total = 0
+  let totalToday = 0,
+      totalPurshed = 0
+
   if (transactions) {
     transactions.forEach(transaction => {
-      const valueInCOP = transaction.currency === 'COP' ? transaction.value : transaction.value * trm
-      total += valueInCOP
+
+      let valueTodayInCOP,
+          valuePurshedInCOP = 0
+
+      if (transaction.currency === 'COP') {
+        valuePurshedInCOP = transaction.value
+        valueTodayInCOP = transaction.value
+      }
+      else {
+        valuePurshedInCOP = transaction.value * trm
+        valueTodayInCOP = transaction.currentPrice * trm
+      }
+      totalPurshed += valuePurshedInCOP
+      totalToday += valueTodayInCOP
     })
   }
   return (
@@ -30,7 +44,10 @@ function Transactions() {
       <div className="my-6 mx-4 p-4 rounded-lg bg-gradient-to-r from-green-500 from-40% via-green-600 via-70% to-emerald-500 to-90% ">
         <p  className='text-white text-xs'>TRM: {trm}</p>
         <p className='text-white text-2xl font-bold'>{
-          total.toLocaleString('es-CO', currencyFormat.COP.format)
+          totalPurshed.toLocaleString('es-CO', currencyFormat.COP.format)
+        }</p>
+        <p className='text-white text-2xl font-bold'>{
+          totalToday.toLocaleString('es-CO', currencyFormat.COP.format)
         }</p>
       </div>
       {loading && <p>Loading...</p>}
@@ -45,17 +62,21 @@ function Transactions() {
               onClick={() => setEditTransaction(transaction)}
             >
               <td>
-                {transaction.cod??transaction.platform.name}
-                <br/>{transaction.quantity}
-              </td>
-              <td className="p-2 w-14">{transaction.name}
-                <br/>{transaction.currency}
+                {transaction.name}
+                <br />
+                {transaction.platform.name} Q: {transaction.quantity}
               </td>
               <td>
-                {transaction.value.toLocaleString(
+                {transaction.currency} {transaction.value.toLocaleString(
                   currencyFormat[transaction.currency].local,
                   currencyFormat[transaction.currency].format
                 )}
+                <br/>
+                {transaction.currentPrice.toLocaleString('es-CO', currencyFormat.COP.format)}
+                <br/>
+                % {
+                  ((transaction.currentPrice - transaction.value)  * 100 / transaction.value).toFixed(2)
+                  }
               </td>
             </tr>)
           })}
