@@ -19,10 +19,10 @@ function Dashboard() {
       <Header />
       <section className="p-2 bg-slate-50">
         <DonutChart data={dataPie} width="200" heigth="200" className="m-auto" />
-        <PlatformsSlide />
         <Transactions />
         <AddTransactionLink />
-        <div className='h-12 w-full'></div>
+        <PlatformsSlide />
+        <div className='h-14 w-full'></div>
       </section>
       <Footer />
     </>

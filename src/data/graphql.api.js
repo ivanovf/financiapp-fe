@@ -7,9 +7,11 @@ export const GET_TRANSACTIONS = gql`
       name
       cod
       value
+      createdAt
       quantity
       currency
       currentPrice
+      purchaseTRM
       platform {
         name
       }

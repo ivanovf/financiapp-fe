@@ -4,26 +4,36 @@ import FieldInput from "./UI/atoms/FieldInput";
 import { useMutation } from "@apollo/client";
 import FieldSelectBox from "./UI/atoms/FieldSelectBox";
 import { AuthContext } from "../contexts/AuthContext";
-import { ADD_TRANSACTION, EDIT_TRANSACTION, DELETE_TRANSACTION } from "../data/graphql.api";
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
+
+import {
+  ADD_TRANSACTION,
+  EDIT_TRANSACTION,
+  DELETE_TRANSACTION,
+} from "../data/graphql.api";
 
 function TransactionForm({ transaction, onCancel }) {
   const [name, setName] = useState("");
   const [value, setValue] = useState(0);
   const [cod, setCod] = useState("");
-  const [currency, setCurrency] = useState("USD");
-  const [quantity, setQuantity] = useState(0);
-  const [owner, setOwner] = useState("Sandra");
-  const [box, setBox] = useState("SAFETY");
-  const [platform, setPlatform] = useState(null);
+  const [createdAt, setCreatedAt] = useState(new Date());
+  const [currency, setCurrency] = useState("USD")
+  const [quantity, setQuantity] = useState(0)
+  const [owner, setOwner] = useState(undefined)
+  const [box, setBox] = useState("SAFETY")
+  const [platform, setPlatform] = useState(undefined)
+  const [purchaseTRM, setPurchaseTRM] = useState(0)
 
-  const{ platforms, loading } = useContext(AuthContext);
+  const { platforms, loading } = useContext(AuthContext);
 
   useEffect(() => {
-
     if (transaction) {
       setName(transaction.name);
       setValue(transaction.value);
       setCod(transaction.cod);
+      setCreatedAt(transaction.createdAt);
       setCurrency(transaction.currency);
       setQuantity(transaction.quantity);
       setOwner(transaction.owner);
@@ -33,10 +43,10 @@ function TransactionForm({ transaction, onCancel }) {
   }, [transaction]);
 
   let op = null,
-      variables = {}
+    variables = {};
 
   if (transaction) {
-    op = EDIT_TRANSACTION
+    op = EDIT_TRANSACTION;
     variables = {
       variables: {
         id: transaction.id,
@@ -45,61 +55,60 @@ function TransactionForm({ transaction, onCancel }) {
           value: parseFloat(value),
           currency,
           cod,
+          createdAt,
           quantity: parseFloat(quantity),
           platformId: platform,
           owner,
           box,
-        }
-      }
-    }
-  }
-  else {
+        },
+      },
+    };
+  } else {
     op = ADD_TRANSACTION;
     variables = {
       variables: {
         newInput: {
           name,
           value: parseFloat(value),
+          createdAt,
           currency,
           cod,
           quantity: parseFloat(quantity),
           platformId: platform,
           owner,
           box,
-        }
-      }
-    }
+        },
+      },
+    };
   }
 
-  const [saveTransaction, { error: saveError }] = useMutation(op)
-  const [deleteTransaction, { error: deleteError }] = useMutation(DELETE_TRANSACTION)
+  const [saveTransaction, { error: saveError }] = useMutation(op);
+  const [deleteTransaction, { error: deleteError }] = useMutation(DELETE_TRANSACTION);
 
   const handleDelete = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const result = await deleteTransaction({
+      await deleteTransaction({
         variables: {
-          id: transaction.id
-        }
-      })
-      console.log(result)
-      onCancel()
+          id: transaction.id,
+        },
+      });
+      onCancel();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     try {
-      const result = await saveTransaction(variables)
-      console.log(result)
-      onCancel()
+      await saveTransaction(variables);
+      onCancel();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   return (
     <div className="z-10 fixed inset-0 overflow-y-auto top-0 left-0 w-full h-full bg-white">
@@ -114,6 +123,15 @@ function TransactionForm({ transaction, onCancel }) {
           onChange={(e) => setName(e.target.value)}
           type="text"
         />
+        <div className="form-group px-4 mb-4">
+         <label className='block mb-1 text-md font-medium text-gray-900 dark:text-white'>Created at</label>
+          <DatePicker
+            onChange={(date) => setCreatedAt(date)}
+            selected={createdAt}
+            showIcon
+            className="border-2 border-gray-300 rounded-md p-2"
+          />
+        </div>
         <FieldInput
           name="value"
           label="Value"
@@ -123,29 +141,30 @@ function TransactionForm({ transaction, onCancel }) {
         />
         <FieldInput
           name="cod"
-          label="Cod"
+          label="Code"
           value={cod}
           onChange={(e) => setCod(e.target.value)}
           type="text"
         />
-        {
-        loading ?
-          <p>Getting platforms...</p> :
+
+        {loading ? (
+          <p>Getting platforms...</p>
+        ) : (
           <FieldSelectBox
             label="Platform"
             value={platform}
             onChange={(e) => setPlatform(e.target.value)}
             options={platforms}
           />
-        }
+        )}
         <FieldSelectBox
           name="currency"
           label="Currency"
           value={currency}
           onChange={(e) => setCurrency(e.target.value)}
           options={[
-            { id: 'USD',  name: 'USD' },
-            { id: 'COP', name: 'COP' },
+            { id: "USD", name: "USD" },
+            { id: "COP", name: "COP" },
           ]}
         />
         <FieldInput
@@ -155,13 +174,22 @@ function TransactionForm({ transaction, onCancel }) {
           onChange={(e) => setQuantity(e.target.value)}
           type="number"
         />
+
+        <FieldInput
+          name="purchaseTRM"
+          label="purchase TRM"
+          value={purchaseTRM}
+          onChange={(e) => setPurchaseTRM(e.target.value)}
+          type="number"
+        />
+        
         <FieldSelectBox
           label="Owner"
           value={owner}
           onChange={(e) => setOwner(e.target.value)}
           options={[
-            { id: 'Sandra',  name: 'Sandra' },
-            { id: 'Dario', name: 'Dario' },
+            { id: "Sandra", name: "Sandra" },
+            { id: "Dario", name: "Dario" },
           ]}
         />
         <FieldSelectBox
@@ -169,8 +197,8 @@ function TransactionForm({ transaction, onCancel }) {
           value={box}
           onChange={(e) => setBox(e.target.value)}
           options={[
-            { id: 'RISK',  name: 'Risk' },
-            { id: 'SAFETY', name: 'Safety' },
+            { id: "RISK", name: "Risk" },
+            { id: "SAFETY", name: "Safety" },
           ]}
         />
 
@@ -178,13 +206,15 @@ function TransactionForm({ transaction, onCancel }) {
           <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
             Submit
           </button>
-          {transaction && 
-          <button
-            type="button"
-            onClick={handleDelete}
-            className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
-            Delete
-          </button>}
+          {transaction && (
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800"
+            >
+              Delete
+            </button>
+          )}
           <button
             type="button"
             className="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
