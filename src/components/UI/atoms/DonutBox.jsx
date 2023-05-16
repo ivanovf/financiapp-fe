@@ -23,15 +23,15 @@ export default function DonutBox({transactions, trm}) {
   const safetyPorcentage =  Math.round(safetyGrades * 100 / 180)
 
   const dataPie = [
-    {value: riskGrades, stroke: "#22594e"},
-    {value: safetyGrades, stroke: "#a1d9ce"},
+    {value: riskGrades, stroke: "rgb(251 146 60)"},
+    {value: safetyGrades, stroke: "rgb(163 230 53)"},
   ]
   return (
     <>
       <DonutChart data={dataPie} width="200" heigth="200" className="m-auto" />
       <div className='h-14 w-full text-center'>
-        <span className={`px-4 py-2 m-2 bg-[${dataPie[0].stroke}] text-white`}>Risk {riskPorcentage}%</span>
-        <span className={`px-4 py-2 m-2 bg-[${dataPie[1].stroke}]`}>Safety {safetyPorcentage}%</span>
+        <span className="px-4 py-2 m-2 bg-orange-400">Risk {riskPorcentage}%</span>
+        <span className={`px-4 py-2 m-2 bg-lime-400`}>Safety {safetyPorcentage}%</span>
       </div>
     </>
   )
