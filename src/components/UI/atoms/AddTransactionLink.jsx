@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import TransactionForm from '../../TransactionForm'
+import TransactionForm from '../molecules/TransactionForm'
 import PlusSVG from '../../../assets/icons/plus.svg'
 
 function AddTransactionLink() {

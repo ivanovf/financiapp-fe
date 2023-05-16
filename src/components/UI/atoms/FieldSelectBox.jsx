@@ -16,9 +16,10 @@ function FieldSelectBox({ label, options, value, onChange }) {
       <select 
         id={id}
         className="form-control"
-        value={value??options[0].id}
+        value={value}
         onChange={onChange}
       >
+        <option value="">Select</option>
         {options.map((option, index) => (
           <option key={index} value={option.id}>
             {option.name}

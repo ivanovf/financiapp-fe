@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import { PropTypes } from "prop-types";
-import FieldInput from "./UI/atoms/FieldInput";
+import FieldInput from "../atoms/FieldInput";
 import { useMutation } from "@apollo/client";
-import FieldSelectBox from "./UI/atoms/FieldSelectBox";
-import { AuthContext } from "../contexts/AuthContext";
+import FieldSelectBox from "../atoms/FieldSelectBox";
+import { AuthContext } from "../../../contexts/AuthContext";
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -12,9 +12,10 @@ import {
   ADD_TRANSACTION,
   EDIT_TRANSACTION,
   DELETE_TRANSACTION,
-} from "../data/graphql.api";
+  GET_TRANSACTIONS,
+} from "../../../data/graphql.api";
 
-function TransactionForm({ transaction, onCancel }) {
+function TransactionForm({ transaction, onCancel, onSave }) {
   const [name, setName] = useState("");
   const [value, setValue] = useState(0);
   const [cod, setCod] = useState("");
@@ -82,7 +83,12 @@ function TransactionForm({ transaction, onCancel }) {
     };
   }
 
-  const [saveTransaction, { error: saveError }] = useMutation(op);
+  const [saveTransaction, { error: saveError }] = useMutation(op, {
+    refetchQueries: [
+      {
+        query: GET_TRANSACTIONS,
+      }  
+    ]});
   const [deleteTransaction, { error: deleteError }] = useMutation(DELETE_TRANSACTION);
 
   const handleDelete = async (e) => {
@@ -93,7 +99,7 @@ function TransactionForm({ transaction, onCancel }) {
           id: transaction.id,
         },
       });
-      onCancel();
+      onCancel()
     } catch (error) {
       console.log(error);
     }
@@ -104,14 +110,14 @@ function TransactionForm({ transaction, onCancel }) {
 
     try {
       await saveTransaction(variables);
-      onCancel();
+      onSave(transaction)
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <div className="z-10 fixed inset-0 overflow-y-auto top-0 left-0 w-full h-full bg-white">
+    <>
       <h2 className="text-xl font-bold text-gray-900 dark:text-white p-4">
         Transaction Form
       </h2>
@@ -224,7 +230,7 @@ function TransactionForm({ transaction, onCancel }) {
           </button>
         </div>
       </form>
-    </div>
+    </>
   );
 }
 

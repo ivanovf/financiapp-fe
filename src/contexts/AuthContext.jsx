@@ -16,10 +16,13 @@ function getSession() {
 
 async function getTRM() {
   try {
-    const response = await fetch(import.meta.env.VITE_TRM_URL)
+    const response = await fetch(import.meta.env.VITE_TRM_URL, {
+      headers: {
+        'apikey': import.meta.env.VITE_TRM_KEY
+      }
+    })
     const data = await response.json()
-    const trm = data[0].valor
-    return trm
+    return data.result
   } catch (error) {
     console.error('Error getting TRM:', error)
     return null
@@ -76,6 +79,8 @@ export function AuthProvider({ children }) {
       transactions,
       platforms,
       trm,
+      setTransactions,
+      setPlatforms,
       loading: resultTransactions.loading || resultPlatforms.loading,
     }}>
       {children[step]}

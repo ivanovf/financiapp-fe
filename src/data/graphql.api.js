@@ -12,6 +12,9 @@ export const GET_TRANSACTIONS = gql`
       currency
       currentPrice
       purchaseTRM
+      platformId
+      owner
+      box
       platform {
         name
       }
