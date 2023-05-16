@@ -1,3 +1,5 @@
+import Logo  from '../assets/logo.png'
+
 function Header() {
   return (
     <header className="flex flex-row justify-between items-center p-5">
@@ -8,7 +10,7 @@ function Header() {
         <span>Hi,</span> <strong>Sandra</strong>
       </div>
       <div className="basis-1/6 text-right">
-        <span>Icon</span>
+        <span><img src={Logo} alt="logo" className="w-10 h-10" /></span>
       </div>
     </header>
   )

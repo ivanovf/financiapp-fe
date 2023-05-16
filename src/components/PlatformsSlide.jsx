@@ -1,4 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
+import PlatformFrom from './UI/molecules/PlatformFrom'
 
 function PlatformsSlide() {
   const QUERY_PLATFORMS = gql`
@@ -26,6 +27,7 @@ function PlatformsSlide() {
           })
         }
       </ul>
+      <PlatformFrom />
     </div>
   )
 }

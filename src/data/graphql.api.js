@@ -47,3 +47,12 @@ export const DELETE_TRANSACTION = gql`
   mutation DeleteTransaction($id: ID!) {
     deleteTransaction(id: $id)
   }`
+
+export const ADD_PLATFORM = gql`
+  mutation CreatePlatform($newInput: NewPlatform!) {
+    createPlatform(newInput: $newInput) {
+      id
+    }
+  }`
+
+  

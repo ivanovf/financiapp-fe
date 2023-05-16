@@ -237,6 +237,7 @@ function TransactionForm({ transaction, onCancel, onSave }) {
 TransactionForm.propTypes = {
   transaction: PropTypes.object,
   onCancel: PropTypes.func,
+  onSave: PropTypes.func,
 };
 
 export default TransactionForm;
